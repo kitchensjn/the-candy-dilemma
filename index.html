@@ -6,11 +6,19 @@
         <script defer src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
         <script src="https://d3js.org/d3.v7.min.js"></script>
         <style>
-            body {
-                padding: 50px;
+            #banner {
+                width: 100%;
+                text-align: center;
+                font-size: 100px;
+            }
+
+            #instructions {
+                text-align: center;
+                padding: 200px;
             }
 
             #play {
+                padding: 50px;
                 display: flex;
                 flex-direction: row;
                 flex-wrap: wrap;
@@ -109,28 +117,34 @@
             }
 
             #past-rounds {
-                width: 300px;
+                width: 200px;
                 text-align: center;
             }
 
         </style>
     </head>
     <body>
+        <div id="banner">
+            <h1>WELCOME TO THE <span class="red">CANDY</span> <span class="blue">DILEMMA</span></h1>
+        </div>
+        <div id="instructions">
+            <h2>The team with more points after <span class="red">5 rounds</span> wins candy. The other team gets NO CANDY. However, the winning team must reach <span class="blue">at least 10 points</span> for any candy to be rewarded.</h2>
+        </div>
         <div id="play">
             <div id="payment">
-                <h1>PAYOFF MATRIX</h1>
+                <h2>PAYOFF MATRIX</h2>
                 <div id="payoff-matrix">
                     <div class="column">
                         <div class="gap"></div>
                         <div class="row-title red">
-                            <h2>Cooperate</h2>
+                            <h3>Cooperate</h3>
                         </div>
                         <div class="row-title red">
-                            <h2>Defect</h2>
+                            <h3>Defect</h3>
                         </div>
                     </div>
                     <div class="column">
-                        <h2 class="column-title blue">Cooperate</h2>
+                        <h3 class="column-title blue">Cooperate</h3>
                         <div class="strat-combo">
                             <div class="payoff">
                                 <input id="cc-red" class="red" type="number" name="red_pay" value=3>
@@ -150,7 +164,7 @@
                         </div>
                     </div>
                     <div class="column">
-                        <h2 class="column-title blue">Defect</h2>
+                        <h3 class="column-title blue">Defect</h3>
                         <div id="cooperate-defect" class="strat-combo">
                             <div class="payoff">
                                 <input id="cd-red" class="red" type="number" name="red_pay" value=-1>
@@ -174,7 +188,7 @@
                 <div id="teams">
                     <div id="red-team" class="team-info">
                         <div class="title red">
-                            <h1>RED</h1>
+                            <h2>RED</h2>
                             <h1 id="red-score" class="score">0</h1>
                         </div>
                         <select id="red-strat">
@@ -184,7 +198,7 @@
                     </div>
                     <div id="blue-team" class="team-info">
                         <div class="title blue">
-                            <h1>BLUE</h1>
+                            <h2>BLUE</h2>
                             <h1 id="blue-score" class="score">0</h1>
                         </div>
                         <select id="blue-strat">
@@ -196,7 +210,7 @@
                 <button id="submit" onclick="submit()">Submit</button>
             </div>
             <div id="past-rounds">
-                <h1>Past Rounds</h1>
+                <h2>Past Rounds</h2>
             </div>
         </div>
         
