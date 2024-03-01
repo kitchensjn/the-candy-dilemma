@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>The Candy Dilemma</title>
+        <meta charset="utf-8">
+        <script defer src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <style>
+            body {
+                padding: 50px;
+            }
+
+            #play {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            #payment {
+                text-align: center;
+            }
+
+            #payoff-matrix {
+                display: flex;
+                justify-content: center;
+                padding: 0px 50px;
+                outline: 3px solid black;
+            }
+
+            .column {
+                text-align: center;
+                padding: 20px;
+            }
+
+            .column-title {
+                padding: 20px;
+                margin: 0px;
+            }
+
+            .gap {
+                height: 68px;
+            }
+
+            .row-title {
+                height: 158px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .strat-combo {
+                padding: 50px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .payoff {
+                display: flex;
+                padding: 5px;
+            }
+
+            .payoff>.team {
+                width: 50px;
+            }
+
+            .red {
+                color: red;
+            }
+
+            .blue {
+                color: blue;
+            }
+
+            .payoff>input {
+                width: 50px;
+                font-size: 20px;
+            }
+
+            #game {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 600px;
+            }
+
+            #game>button {
+                width: 100px;
+            }
+
+            #teams {
+                display: flex;
+                justify-content: space-around;
+            }
+
+            .team-info {
+                padding: 50px;
+                width: 150px;
+                text-align: center;
+            }
+
+            .title {
+                text-align: center;
+            }
+
+            .score {
+                font-size: 100px;
+            }
+
+            #past-rounds {
+                width: 300px;
+                text-align: center;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div id="play">
+            <div id="payment">
+                <h1>PAYOFF MATRIX</h1>
+                <div id="payoff-matrix">
+                    <div class="column">
+                        <div class="gap"></div>
+                        <div class="row-title red">
+                            <h2>Cooperate</h2>
+                        </div>
+                        <div class="row-title red">
+                            <h2>Defect</h2>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <h2 class="column-title blue">Cooperate</h2>
+                        <div class="strat-combo">
+                            <div class="payoff">
+                                <input id="cc-red" class="red" type="number" name="red_pay" value=3>
+                            </div>
+                            <div class="payoff">
+                                <input id="cc-blue" class="blue" type="number" name="blue_pay" value=3>
+                            </div>
+                            
+                        </div>
+                        <div id="defect-cooperate" class="strat-combo">
+                            <div class="payoff">
+                                <input id="dc-red" class="red" type="number" name="red_pay" value=5>
+                            </div>
+                            <div class="payoff">
+                                <input id="dc-blue" class="blue" type="number" name="blue_pay" value=-1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <h2 class="column-title blue">Defect</h2>
+                        <div id="cooperate-defect" class="strat-combo">
+                            <div class="payoff">
+                                <input id="cd-red" class="red" type="number" name="red_pay" value=-1>
+                            </div>
+                            <div class="payoff">
+                                <input id="cd-blue" class="blue" type="number" name="blue_pay" value=5>
+                            </div>
+                        </div>
+                        <div id="defect-defect" class="strat-combo">
+                            <div class="payoff">
+                                <input id="dd-red" class="red" type="number" name="red_pay" value=0>
+                            </div>
+                            <div class="payoff">
+                                <input id="dd-blue" class="blue" type="number" name="blue_pay" value=0>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="game">
+                <div id="teams">
+                    <div id="red-team" class="team-info">
+                        <div class="title red">
+                            <h1>RED</h1>
+                            <h1 id="red-score" class="score">0</h1>
+                        </div>
+                        <select id="red-strat">
+                            <option value="Cooperate">Cooperate</option>
+                            <option value="Defect">Defect</option>
+                        </select>
+                    </div>
+                    <div id="blue-team" class="team-info">
+                        <div class="title blue">
+                            <h1>BLUE</h1>
+                            <h1 id="blue-score" class="score">0</h1>
+                        </div>
+                        <select id="blue-strat">
+                            <option value="Cooperate">Cooperate</option>
+                            <option value="Defect">Defect</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="submit" onclick="submit()">Submit</button>
+            </div>
+            <div id="past-rounds">
+                <h1>Past Rounds</h1>
+            </div>
+        </div>
+        
+
+        <script>
+            var submit = function() {
+                var red = d3.select("#red-strat").node().value;
+                var blue = d3.select("#blue-strat").node().value;
+                if ((red == "Cooperate") & (blue == "Cooperate")) {
+                    d3.select("#red-score").text(Number(d3.select("#red-score").text()) + Number(d3.select("#cc-red").node().value));
+                    d3.select("#blue-score").text(Number(d3.select("#blue-score").text()) + Number(d3.select("#cc-blue").node().value));
+                } else if ((red == "Cooperate") & (blue == "Defect")) {
+                    d3.select("#red-score").text(Number(d3.select("#red-score").text()) + Number(d3.select("#cd-red").node().value));
+                    d3.select("#blue-score").text(Number(d3.select("#blue-score").text()) + Number(d3.select("#cd-blue").node().value));
+                } else if ((red == "Defect") & (blue == "Cooperate")) {
+                    d3.select("#red-score").text(Number(d3.select("#red-score").text()) + Number(d3.select("#dc-red").node().value));
+                    d3.select("#blue-score").text(Number(d3.select("#blue-score").text()) + Number(d3.select("#dc-blue").node().value));
+                } else if ((red == "Defect") & (blue == "Defect")) {
+                    d3.select("#red-score").text(Number(d3.select("#red-score").text()) + Number(d3.select("#dd-red").node().value));
+                    d3.select("#blue-score").text(Number(d3.select("#blue-score").text()) + Number(d3.select("#dd-blue").node().value));
+                }
+                d3.select("#past-rounds").append("p")
+                    .text(red + " - " + blue);
+            }
+        </script>
+    </body>
+</html>
